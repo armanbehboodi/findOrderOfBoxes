@@ -1,0 +1,71 @@
+<html>
+<head>
+    <style>
+        .container {
+            width    : 1170px;
+            margin   : 0 auto;
+            position : relative;
+        }
+
+        .box {
+            position   : absolute;
+            background : red;
+            width      : 300px;
+            height     : 300px;
+            color      : #fff;
+            font-size  : 50px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="box" style="top: 20px; left: 30px" id="box1">box1</div>
+    <div class="box" style="height:1700px; top: 20px; left: 530px" id="box2">box2</div>
+    <div class="box" style="top: 1450px; left: 230px" id="box3">box3</div>
+    <div class="box" style="top: 20px; left: 630px" id="box4">box4</div>
+    <div class="box" style="top: 950px; left: 130px" id="box5">box5</div>
+</div>
+
+</body>
+    <script>
+
+        let boxes = document.getElementsByClassName("box");
+        let testArray = [];
+        for(let i=0; i<boxes.length; i++){
+            testArray.push(
+                {
+                    name: `box${i+1}`,
+                    bottom: `${Number(boxes[i].getBoundingClientRect().top) + Number(boxes[i].getBoundingClientRect().height)}`,
+                    top: `${Number(boxes[i].getBoundingClientRect().top)}`
+                }
+            )
+        }
+
+        let sortedTestArray = testArray.sort((a,b) => (Number(a.top) > Number(b.top)) ? 1 : ((Number(b.top) > Number(a.top)) ? -1 : 0))
+
+        let updatedTestArray = [];
+        for (let x=0; x<sortedTestArray.length; x++){
+            let count = 1;
+            let sameRow = 0;
+            for (let y=0; y<sortedTestArray.length; y++){
+                if(Number(sortedTestArray[x].top) > Number(sortedTestArray[y].bottom)){
+                    count++;
+                }
+                if(Number(sortedTestArray[x].top) > Number(sortedTestArray[y].top)){
+                    for (let z = 0; z < sortedTestArray.length; z++) {
+                        if (Number(sortedTestArray[y].top) <= Number(sortedTestArray[z].bottom) && Number(sortedTestArray[y].top) > Number(sortedTestArray[z].top) || Number(sortedTestArray[y].top) >= Number(sortedTestArray[z].top) && Number(sortedTestArray[y].bottom) < Number(sortedTestArray[z].bottom)) {
+                            sameRow++;
+                        }
+                    }
+                }               
+            }     
+            updatedTestArray.push(
+                {
+                    name: `${sortedTestArray[x].name}`,
+                    row: `${sameRow > 0 && count - sameRow > 0 ? count - sameRow : sameRow > 0 && count - sameRow <= 0 ? 1 : count}`
+                }
+            )
+        }
+        console.log("the order of boxes is :",updatedTestArray)
+    </script>
+</html>
